@@ -17,14 +17,14 @@ pub struct Initialize<'info>{
     #[account(mut)]
     pub user: Signer<'info>,
 
-    pub system_program: Program<'info, System>
+    pub system_program: Program<'info, System>,
 }
 
 #[account]
 #[derive(Default)]
 pub struct ProgramAccount {
     pub balance: u64,
-    pub bump: u8
+    pub bump: u8,
 }
 
 #[derive(Accounts)]
@@ -43,14 +43,13 @@ pub struct CreatePDAUserAccount<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
 
-    pub system_program: Program<'info, System>
+    pub system_program: Program<'info, System>,
 }
 
 #[account]
 pub struct User {
-    pub seeds: String,
-    pub bump: u8,
+    pub referrer: Pubkey,
     pub balance: u64,
     pub partners: Vec<Pubkey>,
-    pub referrer: Pubkey
+    pub bump: u8,
 }

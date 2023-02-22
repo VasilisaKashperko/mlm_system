@@ -9,8 +9,15 @@ describe("mlm_system", () => {
 
   let owner = anchor.web3.Keypair.generate();
 
+  it("Is signed up!", async () => {
+    const tx1 = await program.methods.signup(owner.publicKey);
+    if (tx1) {
+        console.log("Users had been signed up!");
+    }
+  })
+
   it("Is initialized!", async () => {
-    // const tx = await program.methods.initialize().rpc();
-    // console.log("Your transaction signature", tx);
+    const tx = program.methods.initialize().rpc();
+    console.log("Your transaction signature", tx);
   });
 })
