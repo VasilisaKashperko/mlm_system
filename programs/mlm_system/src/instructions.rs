@@ -38,13 +38,13 @@ pub fn get_level(account_balance: f64) -> u128 {
 }
 
 pub fn invest(ctx: Context<CreatePDAUserAccount>, investment_amount: u64) -> ProgramResult {
-
     if investment_amount > MIN_INVESTMENT {
         **ctx.accounts.user.to_account_info().try_borrow_mut_lamports()? -= investment_amount;
         **ctx.accounts.system_program.to_account_info().try_borrow_mut_lamports()? += investment_amount;
 
         let user = &mut ctx.accounts.user_info;
-        let total_investment_amount = investment_amount - (investment_amount * 5 / 100);
+        let percentage = 5;
+        let total_investment_amount = investment_amount - (investment_amount * percentage as u64 / 100);
 
         user.balance = total_investment_amount;
 

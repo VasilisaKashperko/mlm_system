@@ -25,6 +25,7 @@ pub struct Initialize<'info>{
 pub struct ProgramAccount {
     pub balance: u64,
     pub bump: u8,
+    pub percentage: u8,
 }
 
 #[derive(Accounts)]

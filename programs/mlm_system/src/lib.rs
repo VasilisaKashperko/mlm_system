@@ -11,9 +11,11 @@ declare_id!("EuuVAbcqK268gEjAoSKHkrG9nCpbmooYqYXfcndbFHdn");
 pub mod mlm_system {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
+    pub fn initialize(ctx: Context<Initialize>, percentage: u8 ) -> ProgramResult {
         let program = &mut ctx.accounts.program;
-        program.bump;
+        program.balance = 0;
+        program.percentage = percentage;
+
         Ok(())
     }
 
