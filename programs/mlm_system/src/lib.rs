@@ -27,8 +27,8 @@ pub mod mlm_system {
         instructions::get_partners(ctx)
     }
 
-    pub fn invest(ctx: Context<CreatePDAUserAccount>, investment_amount: u64) -> ProgramResult {
-        instructions::invest(ctx, investment_amount)
+    pub fn invest(ctx: Context<CreatePDAUserAccount>, investment_amount: u64, user: Pubkey) -> ProgramResult {
+        instructions::invest(ctx, investment_amount, user)
     }
 
     pub fn withdraw(ctx: Context<CreatePDAUserAccount>) -> ProgramResult {

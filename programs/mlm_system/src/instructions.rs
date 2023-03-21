@@ -39,20 +39,29 @@ pub fn get_level(account_balance: f64) -> u128 {
     return level;
 }
 
-pub fn invest(ctx: Context<CreatePDAUserAccount>, investment_amount: u64) -> ProgramResult {
+pub fn invest(ctx: Context<CreatePDAUserAccount>, investment_amount: u64, user: Pubkey) -> ProgramResult {
     if investment_amount > MIN_INVESTMENT {
-        **ctx.accounts.user.to_account_info().try_borrow_mut_lamports()? -= investment_amount;
-        **ctx.accounts.system_program.to_account_info().try_borrow_mut_lamports()? += investment_amount;
+        let mut user_account = ctx.accounts.user.to_account_info();
 
-        let user = &mut ctx.accounts.user_info;
+        **user_account.try_borrow_mut_lamports()? -= investment_amount;
+        **user_account.try_borrow_mut_lamports()? += investment_amount;
+
+        // Check if the public key passed to the function matches the public key of the user account
+        if user_account.key() != user {
+            return Err(ProgramError::InvalidArgument);
+        }
+
+        let user_info = &mut ctx.accounts.user_info;
         let percentage = 5;
         let total_investment_amount = investment_amount - (investment_amount * percentage as u64 / 100);
 
-        user.balance = total_investment_amount;
+        user_info.balance += total_investment_amount;
+
+        let lamports = &mut user_account.lamports;
+        **lamports.borrow_mut() += total_investment_amount;
 
         Ok(())
     }
-
     else {
         panic!("You're trying to invest less than it's needed! The minimum investment is {}.", MIN_INVESTMENT);
     }
