@@ -11,7 +11,6 @@ pub struct Initialize<'info>{
     payer = user,
     space = size_of::<ProgramAccount>()
     )]
-
     pub program: Account<'info, ProgramAccount>,
 
     #[account(mut)]

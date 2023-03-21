@@ -16,9 +16,15 @@ describe("mlm_system", () => {
     }
   })
 
+  // it("Is initialized!", async () => {
+  //   let percentage: number = 5;
+  //   const tx = await program.methods.initialize(5);
+  //   console.log("Your transaction signature");
+  // });
+
   it("Is initialized!", async () => {
-    let percentage: number = 5;
+    // Add your test here.
     const tx = await program.methods.initialize(5);
-    console.log("Your transaction signature", tx);
+    console.log("Your transaction signature");
   });
 })

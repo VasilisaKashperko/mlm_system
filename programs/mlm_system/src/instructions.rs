@@ -11,6 +11,7 @@ pub const COMMISSION_LEVELS: [f32; 10] = [1.0, 0.7, 0.5, 0.2, 0.1, 0.1, 0.1, 0.1
 pub fn signup(ctx: Context<CreatePDAUserAccount>, referrer: Pubkey) -> ProgramResult {
     let user = &mut ctx.accounts.user_info;
     user.referrer = referrer;
+
     Ok(())
 }
 
@@ -23,6 +24,7 @@ pub fn get_partners(ctx: Context<CreatePDAUserAccount>) -> ProgramResult {
 
     print!("Amount of partners: {}", partners_amount);
     print!("Levels of partners: {:?}", partners_levels);
+
     Ok(())
 }
 
@@ -56,7 +58,41 @@ pub fn invest(ctx: Context<CreatePDAUserAccount>, investment_amount: u64) -> Pro
     }
 }
 
-
 pub fn withdraw(ctx: Context<CreatePDAUserAccount>) -> ProgramResult {
+    let user = &mut ctx.accounts.user_info;
+
+    let mut user_balance: f32 = user.balance as f32;
+
+    if user_balance <= 0.0 {
+        panic!("You cannot withdraw money from your account, you don't have no money at all!");
+    }
+
+    let payer = &mut ctx.accounts.user.key();
+    let mut _address: &mut Pubkey = payer;
+    let mut _referral_count_depth: i8 = 1;
+    let mut index;
+    let mut _partner_commission: f32 = 0.0;
+
+    for _i in 0..10 {
+        while payer.to_string() != " " {
+            _referral_count_depth += 1;
+            _address = &mut user.referrer;
+            index = get_level(user_balance as f64) as usize / 1000;
+            _partner_commission = user_balance * COMMISSION_LEVELS[index];
+
+            **ctx.accounts.user
+                .to_account_info()
+                .try_borrow_mut_lamports()? -= _partner_commission as u64;
+
+            **ctx.accounts.system_program
+                .to_account_info()
+                .try_borrow_mut_lamports()? += _partner_commission as u64;
+
+            user_balance = user_balance - _partner_commission;
+        }
+    }
+
+    user.balance = 0;
+
     Ok(())
 }
