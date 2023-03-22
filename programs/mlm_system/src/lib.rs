@@ -19,8 +19,8 @@ pub mod mlm_system {
         Ok(())
     }
 
-    pub fn signup(ctx: Context<CreatePDAUserAccount>, referrer: Pubkey) -> ProgramResult {
-        instructions::signup(ctx, referrer)
+    pub fn signup(ctx: Context<CreatePDAUserAccount>, user_address: Pubkey, referrer: Pubkey) -> ProgramResult {
+        instructions::signup(ctx, user_address, referrer)
     }
 
     pub fn get_partners(ctx: Context<CreatePDAUserAccount>) -> ProgramResult {
@@ -31,7 +31,7 @@ pub mod mlm_system {
         instructions::invest(ctx, investment_amount, user)
     }
 
-    pub fn withdraw(ctx: Context<CreatePDAUserAccount>) -> ProgramResult {
-        instructions::withdraw(ctx)
+    pub fn withdraw(ctx: Context<CreatePDAUserAccount>, user_address: Pubkey) -> ProgramResult {
+        instructions::withdraw(ctx, user_address)
     }
 }

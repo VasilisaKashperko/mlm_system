@@ -37,8 +37,29 @@ pub struct CreatePDAUserAccount<'info> {
     payer = user,
     space = size_of::<User>()
     )]
-
     pub user_info: Account<'info, User>,
+
+    pub program_info: Account<'info, ProgramAccount>,
+
+    #[account(mut)]
+    pub user: Signer<'info>,
+
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+#[instruction(program_bump: u8)]
+pub struct Withdraw<'info> {
+    #[account(
+    init,
+    seeds = [b"program".as_ref()],
+    bump,
+    payer = user,
+    space = size_of::<User>()
+    )]
+    pub user_info: Account<'info, User>,
+
+    pub program_info: Account<'info, ProgramAccount>,
 
     #[account(mut)]
     pub user: Signer<'info>,

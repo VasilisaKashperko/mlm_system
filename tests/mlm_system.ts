@@ -16,19 +16,17 @@ describe("mlm_system", () => {
   let owner = anchor.web3.Keypair.generate();
 
   it("Is signed up for owner!", async () => {
-    const tx = await program.methods.signup(owner.publicKey);
+    const tx = await program.methods.signup(owner.publicKey, owner.publicKey);
     if (tx) {
         console.log("Users had been signed up!");
     }
   })
 
-  ////////////////////////////////
   it("Is initialized!", async () => {
     let percentage: number = 5;
     const tx = await program.methods.initialize(percentage);
     console.log("Your transaction signature");
   })
-  ////////////////////////////////
 
   let user1 = anchor.web3.Keypair.generate();
   let user2 = anchor.web3.Keypair.generate();
@@ -37,11 +35,11 @@ describe("mlm_system", () => {
   let user5 = anchor.web3.Keypair.generate();
 
   it("Is signed up for users!", async () => {
-    const tx1 = await program.methods.signup(user1.publicKey);
-    const tx2 = await program.methods.signup(user2.publicKey);
-    const tx3 = await program.methods.signup(user3.publicKey);
-    const tx4 = await program.methods.signup(user4.publicKey);
-    const tx5 = await program.methods.signup(user5.publicKey);
+    const tx1 = await program.methods.signup(user1.publicKey, user1.publicKey);
+    const tx2 = await program.methods.signup(user2.publicKey, user1.publicKey);
+    const tx3 = await program.methods.signup(user3.publicKey, user1.publicKey);
+    const tx4 = await program.methods.signup(user4.publicKey, user3.publicKey);
+    const tx5 = await program.methods.signup(user5.publicKey, user5.publicKey);
 
     if (tx1 && tx2 && tx3 && tx4 && tx5) {
       console.log("Users had been signed up!");
@@ -69,4 +67,3 @@ describe("mlm_system", () => {
     }
   })
 })
-
