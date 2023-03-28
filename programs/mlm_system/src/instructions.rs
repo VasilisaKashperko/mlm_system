@@ -1,6 +1,11 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::entrypoint::ProgramResult;
+use anchor_spl::token::{MintTo};
+use anchor_spl::token::mint_to;
+
 use crate::CreatePDAUserAccount;
+use crate::token_states::MintToken;
+use crate::token_states::InitializeMint;
 
 pub const MIN_INVESTMENT: u64 = 1;
 
@@ -35,7 +40,6 @@ pub fn get_partners(ctx: Context<CreatePDAUserAccount>) -> ProgramResult {
     print!("Levels of partners: {:?}", partners_levels);
 
     Ok(())
-    // return partners;
 }
 
 pub fn get_level(account_balance: f64) -> u128 {
@@ -123,48 +127,21 @@ pub fn withdraw(ctx: Context<CreatePDAUserAccount>, user_address: Pubkey) -> Pro
     Ok(())
 }
 
-// pub fn withdraw(ctx: Context<Withdraw>, user_address: Pubkey) -> ProgramResult {
-//     let user = &mut ctx.accounts.user_info;
-//
-//     // Check if the public key passed to the function matches the public key of the user account
-//     if user.key() != user_address {
-//         return Err(ProgramError::InvalidArgument);
-//     }
-//
-//     let mut user_balance: f32 = user.balance as f32;
-//
-//     if user_balance <= 0.0 {
-//         panic!("You cannot withdraw money from your account, you don't have no money at all!");
-//     }
-//
-//     let mut partner_commissions = vec![0.0; 10]; // Vector to store commission amounts for each level
-//
-//     let mut referrer_address = user.referrer;
-//     for i in 0..10 {
-//         // Check if the referral address is empty
-//         if referrer_address == Pubkey::default() {
-//             break;
-//         }
-//
-//         let partners = get_partners(ctx_user: Context<CreatePDAUserAccount>);
-//
-//         let index = get_level(user_balance as f64) as usize / 1000;
-//         let partner_commission = user_balance * COMMISSION_LEVELS[index];
-//
-//         // Transfer the commission amount to the partner
-//         let partner_account = partners.get(i);
-//         // let partner_account = &mut ctx.accounts.partner_accounts[i];
-//         **partner_account.to_account_info().try_borrow_mut_lamports()? += partner_commission as u64;
-//
-//         partner_commissions[i] = partner_commission;
-//         user_balance -= partner_commission;
-//
-//         // Move to the next referral level
-//         let referrer_account = &mut ctx.accounts.referrer_accounts[i];
-//         referrer_address = referrer_account.referrer;
-//     }
-//
-//     user.balance = user_balance as u64;
-//
-//     Ok(())
-// }
+pub fn initialize_mint(_ctx: Context<InitializeMint>) -> Result<()> {
+    Ok(())
+}
+
+pub fn mint_token(ctx: Context<MintToken>, amount: u64) -> Result<()> {
+    let cpi_accounts = MintTo {
+        mint: ctx.accounts.mint.to_account_info(),
+        to: ctx.accounts.token_account.to_account_info(),
+        authority: ctx.accounts.authority.to_account_info(),
+    };
+    let cpi_program = ctx.accounts.token_program.to_account_info();
+    let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+
+    // Execute anchor's helper function to mint tokens
+    mint_to(cpi_ctx, amount)?;
+
+    Ok(())
+}
